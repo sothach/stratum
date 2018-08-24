@@ -12,9 +12,6 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 libraryDependencies ++= Seq(
   ws, guice,
   "org.slf4j" % "slf4j-jdk14" % "1.7.25",
-  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
 
   "org.scalatest" %% "scalatest" % "3.0.5" % Test,
@@ -23,5 +20,5 @@ libraryDependencies ++= Seq(
   "net.jadler" % "jadler-all" % "1.3.0" % Test
 )
 
-herokuAppName in Compile := "stratum"
+herokuAppName in Compile := "stratum-c"
 

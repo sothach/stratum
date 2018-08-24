@@ -1,1 +1,3 @@
+
+GET           /                 controllers.ApiController.index
 POST          /api/translate   controllers.ApiController.translate

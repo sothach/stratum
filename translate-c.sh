@@ -3,4 +3,4 @@ curl -X POST -d \
  -H "Content-Type: application/json" \
  -H "Accept: application/json" \
  -H "Authorization: Basic dGVzdDpzZWNyZXQ=" \
- http://herokuapp.stratum-c.com/api/translate
+ http://stratum-c.herokuapp.com/api/translate

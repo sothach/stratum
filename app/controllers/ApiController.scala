@@ -24,6 +24,10 @@ class ApiController @Inject()(implicit system: ActorSystem,
   private val expectAuth = "Basic dGVzdDpzZWNyZXQ=" // test:secret
   logger.info("ApiController started")
 
+  def index = Action.async {
+    Future.successful(Ok)
+  }
+
   def translate = Action.async(parse.json) { implicit request =>
     request.headers.get("Authorization") match {
       case Some(basicAuth) if basicAuth == expectAuth =>
