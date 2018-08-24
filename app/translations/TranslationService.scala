@@ -22,8 +22,10 @@ class TranslationService @Inject()(implicit val system: ActorSystem,
     request.requestType match {
       case RequestType.TEXT =>
         translations.get((request.text.hashCode, request.language)) map { result =>
-          TranslationResponse(result, request.language)
+          TranslationResponse(result, request.language, request.requestType)
         }
+      case RequestType.FAIL =>
+        throw new RuntimeException("FAIL requested")
       case _ =>
         None
     }

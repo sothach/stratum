@@ -29,20 +29,23 @@ class ApiController @Inject()(implicit system: ActorSystem,
   }
 
   def translate = Action.async(parse.json) { implicit request =>
+    logger.debug(s"request=$request")
     request.headers.get("Authorization") match {
       case Some(basicAuth) if basicAuth == expectAuth =>
-        request.body.validate[TranslationRequest].map {
-          msg: TranslationRequest =>
-            logger.debug(s"received request: $msg")
-            translationService.translate(msg) map {
+        request.body.validate[TranslationRequest].fold(
+          errors => {
+            logger.warn(s"Bad Request: ${errors.mkString}")
+            Future.successful(BadRequest)
+          }, translationRequest => {
+            translationService.translate(translationRequest) map {
               case Some(response) =>
                 Ok(Json.toJson(response))
               case None =>
                 NotFound
             }
-        }.recoverTotal { e =>
-          Future.successful(BadRequest(s"Detected error: ${JsError.toJson(e)}"))
-        }
+          }) recover { case e =>
+            InternalServerError(Json.toJson(e.getMessage))
+          }
       case _ =>
         logger.warn(s"Missing or invalid Auth in $request")
         Future.successful(Unauthorized("Missing or invalid Auth"))

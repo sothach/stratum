@@ -14,11 +14,14 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-jdk14" % "1.7.25",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
 
-  "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
   "org.mockito" % "mockito-all" % "2.0.2-beta" % Test,
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
   "net.jadler" % "jadler-all" % "1.3.0" % Test
 )
+
+
+coverageExcludedPackages := "<empty>;Reverse.*;router.*;controllers.javascript;play.api.*"
 
 herokuAppName in Compile := "stratum-c"
 
