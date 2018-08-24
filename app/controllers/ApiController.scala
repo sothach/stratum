@@ -5,7 +5,7 @@ import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
 import javax.inject.{Inject, Singleton}
 import model.TranslationRequest
 import play.api.Logger
-import play.api.libs.json.{JsError, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, ControllerComponents}
 import translations.TranslationService
 

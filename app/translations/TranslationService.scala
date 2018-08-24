@@ -13,7 +13,9 @@ class TranslationService @Inject()(implicit val system: ActorSystem,
                                    config: Config) {
 
   private val translations = Map(
-    (-841391678, "de") -> "Lassen Sie Ihr Gepäck nicht unbeaufsichtigt. Unbeaufsichtigtes Gepäck im Terminal wird vom Sicherheitsdienst entfernt und kann zerstört werden"
+    (-841391678, "de") -> """Lassen Sie Ihr Gepäck nicht unbeaufsichtigt.
+                            |Unbeaufsichtigtes Gepäck im Terminal wird vom
+                            |Sicherheitsdienst entfernt und kann zerstört werden"""
   )
   implicit val ec = system.dispatcher
   val logger = Logger(this.getClass)
