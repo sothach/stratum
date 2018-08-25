@@ -9,8 +9,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.test._
 
-import scala.util.{Failure, Success}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 class RouteSpec extends PlaySpec with ScalaFutures with GuiceOneAppPerSuite {
 
@@ -101,15 +101,11 @@ class RouteSpec extends PlaySpec with ScalaFutures with GuiceOneAppPerSuite {
         .withBody(failRequest)
         .withHeaders(fakedHeaders)
 
-      route(app, request) foreach { status =>
-        status onComplete {
-          case Success(result) =>
-            result.header.status mustBe OK
-            result.body.contentType mustBe Some("audio/mp3")
-            result.body.contentLength mustBe Some(4)
-          case Failure(_) =>
-            fail
-        }
+      route(app, request) foreach { future =>
+        val result = Await.result(future, 10 seconds)
+        result.header.status mustBe OK
+        result.body.contentType mustBe Some("audio/mp3")
+        result.body.isKnownEmpty mustBe false
       }
     }
   }
@@ -126,6 +122,21 @@ class RouteSpec extends PlaySpec with ScalaFutures with GuiceOneAppPerSuite {
         .withHeaders(fakedHeaders)
 
       route(app, request).map(status) mustBe Some(UNAUTHORIZED)
+    }
+  }
+
+  "A call to the speech service that cannot be converted" should {
+    "return not found (404)" in {
+      val url = s"""/api/speech?apiKey=$apiKey
+                   |&action=convert
+                   |&text=fail
+                   |&voice=usenglishfemale
+                   |&format=mp3""".stripMargin.replaceAll("\n","")
+      val request = FakeRequest("GET", url)
+        .withBody(failRequest)
+        .withHeaders(fakedHeaders)
+
+      route(app, request).map(status) mustBe Some(NOT_FOUND)
     }
   }
 

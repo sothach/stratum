@@ -5,8 +5,9 @@ import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
 import javax.inject.{Inject, Singleton}
 import model._
 import play.api.Logger
+import play.api.http.HttpEntity
 import play.api.libs.json.Json
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.{AbstractController, ControllerComponents, ResponseHeader, Result}
 import translations.TranslationService
 
 import scala.concurrent.Future
@@ -59,8 +60,14 @@ class ApiController @Inject()(implicit system: ActorSystem,
         case key if key == expectKey =>
           val request = SpeechRequest(text, Voice.withName(voice),
             SpeechAction.withName(action), format.map(f => SpeechFormat.withName(f)))
-          translationService.speech(request) map { byteArray =>
-            Ok(byteArray).as(s"""audio/${request.format.getOrElse("mp3")}""")
+          translationService.speechify(request) map {
+            case Some((source, contentLength)) =>
+              Result(header = ResponseHeader(200, Map.empty),
+                body = HttpEntity.Streamed(data=source,
+                  contentLength=Some(contentLength),
+                  contentType=request.format.map(f => s"audio/$f")))
+            case None =>
+              NotFound
           }
         case _ =>
           logger.warn(s"Missing or invalid Auth in $request")

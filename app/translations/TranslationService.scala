@@ -1,15 +1,18 @@
 package translations
 
 import akka.actor.ActorSystem
+import akka.stream.scaladsl.{FileIO, Source, StreamConverters}
+import akka.util.ByteString
 import com.typesafe.config.Config
 import javax.inject.{Inject, Singleton}
 import model.{RequestType, SpeechRequest, TranslationRequest, TranslationResponse}
-import play.api.{Logger, Play}
+import play.api.{Environment, Logger, Play}
 
 import scala.concurrent.Future
 
 @Singleton
 class TranslationService @Inject()(implicit val system: ActorSystem,
+                                   environment: Environment,
                                    config: Config) {
 
   private val translations = Map(
@@ -33,8 +36,14 @@ class TranslationService @Inject()(implicit val system: ActorSystem,
     }
   }
 
-  def speech(request: SpeechRequest): Future[Array[Byte]] = Future {
-    Array[Byte](10, -32, 17, 22)
+  def speechify(request: SpeechRequest): Future[Option[(Source[ByteString, _], Long)]] = Future {
+    val file = new java.io.File("public/audio/Hello.mp3")
+    if(request.text != "fail" && file.exists()) {
+      val resourceStream = environment.classLoader.getResourceAsStream("public/audio/Hello.mp3")
+      Some((StreamConverters.fromInputStream(() => resourceStream), file.length))
+    } else {
+      None
+    }
   }
 
 }

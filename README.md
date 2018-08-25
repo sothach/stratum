@@ -16,6 +16,21 @@ Run the server on a local system, with source change monitoring / automatic rest
 % sbt ~run
 ```
 
+## Sampe usage
+### POST translation request
+```sbtshell
+curl -X POST -d \
+ '{"text": "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services and may be destroyed", "language" : "de", "requestType" : "TEXT"}' \
+ -H "Content-Type: application/json" \
+ -H "Accept: application/json" \
+ http://localhost:9000/api/translate?apiKey=eabb12404d141ed6e8ee2193688178cb
+```
+
+### GET speech request
+```sbtshell
+http://localhost/api/speech?apiKey=eabb12404d141ed6e8ee2193688178cb&action=convert&text=say%20this&voice=usenglishfemale&format=mp3
+```
+
 ## Testing
 ### Running the tests
 Run the test suite to verify correct behaviour.  
