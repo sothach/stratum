@@ -3,8 +3,8 @@ package translations
 import akka.actor.ActorSystem
 import com.typesafe.config.Config
 import javax.inject.{Inject, Singleton}
-import model.{RequestType, TranslationRequest, TranslationResponse}
-import play.api.Logger
+import model.{RequestType, SpeechRequest, TranslationRequest, TranslationResponse}
+import play.api.{Logger, Play}
 
 import scala.concurrent.Future
 
@@ -31,6 +31,10 @@ class TranslationService @Inject()(implicit val system: ActorSystem,
       case _ =>
         None
     }
+  }
+
+  def speech(request: SpeechRequest): Future[Array[Byte]] = Future {
+    Array[Byte](10, -32, 17, 22)
   }
 
 }
