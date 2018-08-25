@@ -53,7 +53,7 @@ class ApiController @Inject()(implicit system: ActorSystem,
       }
   }
 
-  def speech(apiKey: String, action: String, text: String, voice: String, format: Option[String]) = Action.async(parse.json) {
+  def speech(apiKey: String, action: String, text: String, voice: String, format: Option[String]) = Action.async {
     implicit request =>
       apiKey match {
         case key if key == expectKey =>
