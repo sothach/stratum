@@ -10,12 +10,12 @@ import play.api.mvc._
 import translations.TranslationService
 
 import scala.concurrent.Future
-import conversions.Converters._
 
 @Singleton
 class ApiController @Inject()(implicit system: ActorSystem,
-translationService: TranslationService,
-components: ControllerComponents) extends AbstractController(components) {
+        translationService: TranslationService,
+        components: ControllerComponents) extends AbstractController(components) {
+  import conversions.Converters._
 
   implicit val ec = system.dispatcher
   val logger = Logger(this.getClass)
@@ -31,7 +31,7 @@ components: ControllerComponents) extends AbstractController(components) {
   def translate(apiKey: String) = Action.async(parse.json) {
     implicit request =>
       apiKey match {
-        case key if key == expectKey =>
+        case key if key.trim == expectKey =>
           request.body.validate[TranslationRequest].fold(
             errors => {
               val errorResponse = serializeJsErrors(errors)
@@ -57,7 +57,7 @@ components: ControllerComponents) extends AbstractController(components) {
              voice: String, format: Option[String]) = Action {
     implicit request =>
       apiKey match {
-        case key if key == expectKey =>
+        case key if key.trim == expectKey =>
           val request = SpeechRequest(text, Voice.findOrDefault(voice),
             SpeechAction.findOrDefault(action), format.map(f => SpeechFormat.findOrDefault(f)))
           translationService.speechify(request) match {
