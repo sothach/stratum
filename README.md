@@ -4,6 +4,7 @@ Stratum test server
 ### Status
 [![Build Status](https://travis-ci.org/sothach/stratum.png)](https://travis-ci.org/sothach/stratum)
 [![Coverage Status](https://coveralls.io/repos/github/sothach/stratum/badge.svg?branch=master)](https://coveralls.io/github/sothach/stratum?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a688282e09a04ddeb6d0b29f2c8b82e1)](https://www.codacy.com/project/sothach/stratum/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=sothach/stratum&amp;utm_campaign=Badge_Grade_Dashboard)
 
 ## Stubbing Server
 This is a simple Play application that exposes a REST API simulating the service provided by ********.
