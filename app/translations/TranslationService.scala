@@ -36,11 +36,11 @@ class TranslationService @Inject()(implicit val system: ActorSystem,
     }
   }
 
-  def speechify(request: SpeechRequest): Future[Option[(Source[ByteString, _], Long)]] = Future {
+  def speechify(request: SpeechRequest): Option[Source[ByteString, _]] = {
     val file = new java.io.File("public/audio/Hello.mp3")
     if(request.text != "fail" && file.exists()) {
       val resourceStream = environment.classLoader.getResourceAsStream("public/audio/Hello.mp3")
-      Some((StreamConverters.fromInputStream(() => resourceStream), file.length))
+      Some(StreamConverters.fromInputStream(() => resourceStream))
     } else {
       None
     }
