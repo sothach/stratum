@@ -6,8 +6,15 @@ import model.SpeechFormat.SpeechFormat
 import model.Voice.Voice
 import play.api.mvc.QueryStringBindable
 
-object RequestType extends Enumeration {
+trait DefaultEnum extends Enumeration {
+  def default: Value
+  def findOrDefault(v: String) =
+    this.values.find(_.toString == v.trim).getOrElse(default)
+}
+
+object RequestType extends DefaultEnum {
   type RequestType = Value
+  override def default = FAIL
   val TEXT = Value("text")
   val SPEECH = Value("speech")
   val FAIL = Value("fail")
@@ -15,11 +22,6 @@ object RequestType extends Enumeration {
 case class TranslationRequest(text: String, language: String, requestType: RequestType)
 case class TranslationResponse(text: String, language: String, requestType: RequestType)
 
-trait DefaultEnum extends Enumeration {
-  def default: Value
-  def findOrDefault(v: String) =
-    this.values.find(_.toString == v.trim).getOrElse(default)
-}
 object SpeechAction extends DefaultEnum {
   type SpeechAction = Value
   override def default = FAIL
@@ -34,8 +36,8 @@ object SpeechAction extends DefaultEnum {
 }
 object Voice extends DefaultEnum {
   type Voice = Value
-  override def default = ENGLISH_F
-  val ENGLISH_F = Value("usenglishfemale")
+  override def default = ENGLISHF
+  val ENGLISHF = Value("usenglishfemale")
 }
 object SpeechFormat extends DefaultEnum {
   type SpeechFormat = Value

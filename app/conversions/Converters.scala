@@ -7,7 +7,7 @@ import play.api.libs.json._
 object Converters {
 
   implicit object requestTypeFormat extends Format[RequestType] {
-    def reads(json: JsValue) = JsSuccess(RequestType.withName(json.as[String].toLowerCase))
+    def reads(json: JsValue) = JsSuccess(RequestType.findOrDefault(json.as[String].toLowerCase))
     def writes(status: RequestType) =  JsString(status.toString.toLowerCase)
   }
 
@@ -15,8 +15,8 @@ object Converters {
   implicit val translationResponseFormat = Json.format[TranslationResponse]
 
   val serializeJsErrors = (errors: Seq[(JsPath, Seq[JsonValidationError])]) => {
-    val items = errors map { case (path, description) =>
-      val message = description.head.messages.headOption.getOrElse("(unknown")
+    val items = errors map { case (path, description :: _) =>
+      val message = description.messages.headOption.getOrElse("(unknown")
       s"""{"$message" : "$path"}"""
     }
     s"""{"jsonErrors" : [${items.mkString(",")}]}"""
