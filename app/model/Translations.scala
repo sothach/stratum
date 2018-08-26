@@ -15,8 +15,14 @@ object RequestType extends Enumeration {
 case class TranslationRequest(text: String, language: String, requestType: RequestType)
 case class TranslationResponse(text: String, language: String, requestType: RequestType)
 
-object SpeechAction extends Enumeration {
+trait DefaultEnum extends Enumeration {
+  def default: Value
+  def findOrDefault(v: String) =
+    this.values.find(_.toString == v.trim).getOrElse(default)
+}
+object SpeechAction extends DefaultEnum {
   type SpeechAction = Value
+  override def default = FAIL
   val CONVERT = Value("convert")
   val FAIL = Value("fail")
   implicit object speechActionQueryStringBinder
@@ -26,12 +32,14 @@ object SpeechAction extends Enumeration {
       (k: String, e: Exception) => "Cannot parse %s as SpeechAction: %s".format(k, e.getMessage)
     )
 }
-object Voice extends Enumeration {
+object Voice extends DefaultEnum {
   type Voice = Value
+  override def default = ENGLISH_F
   val ENGLISH_F = Value("usenglishfemale")
 }
-object SpeechFormat extends Enumeration {
+object SpeechFormat extends DefaultEnum {
   type SpeechFormat = Value
+  override def default = MP3
   val MP3 = Value("mp3")
 }
 case class SpeechRequest(text: String, voice: Voice, action: SpeechAction, format: Option[SpeechFormat])

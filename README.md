@@ -16,7 +16,7 @@ Run the server on a local system, with source change monitoring / automatic rest
 % sbt ~run
 ```
 
-## Sampe usage
+## Sample usage
 ### POST translation request
 ```sbtshell
 curl -X POST -d \

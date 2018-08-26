@@ -10,12 +10,12 @@ import play.api.mvc._
 import translations.TranslationService
 
 import scala.concurrent.Future
+import conversions.Converters._
 
 @Singleton
 class ApiController @Inject()(implicit system: ActorSystem,
-        translationService: TranslationService,
-        components: ControllerComponents) extends AbstractController(components) {
-  import conversions.Converters._
+translationService: TranslationService,
+components: ControllerComponents) extends AbstractController(components) {
 
   implicit val ec = system.dispatcher
   val logger = Logger(this.getClass)
@@ -58,8 +58,8 @@ class ApiController @Inject()(implicit system: ActorSystem,
     implicit request =>
       apiKey match {
         case key if key == expectKey =>
-          val request = SpeechRequest(text, Voice.withName(voice),
-            SpeechAction.withName(action), format.map(f => SpeechFormat.withName(f)))
+          val request = SpeechRequest(text, Voice.findOrDefault(voice),
+            SpeechAction.findOrDefault(action), format.map(f => SpeechFormat.findOrDefault(f)))
           translationService.speechify(request) match {
             case Some(source) =>
               Ok.chunked(source).as(s"""audio/${request.format.getOrElse("audio/wav")}""")
