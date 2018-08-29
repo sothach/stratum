@@ -5,7 +5,7 @@ import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
 import javax.inject.{Inject, Singleton}
 import model._
 import play.api.Logger
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import translations.TranslationService
 
@@ -21,17 +21,16 @@ class ApiController @Inject()(implicit system: ActorSystem,
   val logger = Logger(this.getClass)
   implicit val materializer = ActorMaterializer(ActorMaterializerSettings(system))
 
-  private val expectKey = "eabb12404d141ed6e8ee2193688178cb"
+  private val expectKey = ApiKey("eabb12404d141ed6e8ee2193688178cb")
   logger.info("ApiController started")
 
   def index = Action.async {
     Future.successful(Ok)
   }
 
-  def translate(apiKey: String) = Action.async(parse.json) {
-    implicit request =>
+  def translate(apiKey: ApiKey): Action[JsValue] = Action.async(parse.json) { request =>
       apiKey match {
-        case key if key.trim == expectKey =>
+        case key if key == expectKey =>
           request.body.validate[TranslationRequest].fold(
             errors => {
               val errorResponse = serializeJsErrors(errors)
@@ -53,16 +52,12 @@ class ApiController @Inject()(implicit system: ActorSystem,
       }
   }
 
-  def speech(apiKey: String, action: String, text: String,
-             voice: String, format: Option[String]) = Action {
-    implicit request =>
+  def speech(apiKey: ApiKey, speechRequest: SpeechRequest) = Action { request =>
       apiKey match {
-        case key if key.trim == expectKey =>
-          val request = SpeechRequest(text, Voice.findOrDefault(voice),
-            SpeechAction.findOrDefault(action), format.map(f => SpeechFormat.findOrDefault(f)))
-          translationService.speechify(request) match {
+        case key if key == expectKey =>
+          translationService.speechify(speechRequest) match {
             case Some(source) =>
-              Ok.chunked(source).as(s"""audio/${request.format.getOrElse("audio/wav")}""")
+              Ok.chunked(source).as(s"""audio/${speechRequest.format.getOrElse("audio/wav")}""")
             case None =>
               NotFound
           }

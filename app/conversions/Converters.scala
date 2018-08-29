@@ -15,8 +15,8 @@ object Converters {
   implicit val translationResponseFormat = Json.format[TranslationResponse]
 
   val serializeJsErrors = (errors: Seq[(JsPath, Seq[JsonValidationError])]) => {
-    val items = errors map { case (path, description :: _) =>
-      val message = description.messages.headOption.getOrElse("(unknown")
+    val items = errors map { case (path, description) =>
+      val message = description.headOption.map(_.messages.headOption.getOrElse("(unknown)")).getOrElse("(unknown)")
       s"""{"$message" : "$path"}"""
     }
     s"""{"jsonErrors" : [${items.mkString(",")}]}"""

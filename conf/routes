@@ -1,4 +1,4 @@
 
 GET    /                controllers.ApiController.index
-POST   /api/translate   controllers.ApiController.translate(apiKey: String)
-GET    /api/speech      controllers.ApiController.speech(apiKey: String, action: String, text: String, voice: String, format: Option[String])
+POST   /api/translate   controllers.ApiController.translate(apiKey: model.ApiKey)
+GET    /api/speech      controllers.ApiController.speech(apiKey: model.ApiKey, request: model.SpeechRequest)
