@@ -13,13 +13,13 @@ of client application, avoiding the charges and providing canned happy-path and 
 
 ## Running locally
 Run the server on a local system, with source change monitoring / automatic restarting
-```sbtshell
+```shell
 % sbt ~run
 ```
 
 ## Sample usage
 ### POST translation request
-```sbtshell
+```shell
 curl -X POST -d \
  '{"text": "We strongly advise you to keep your luggage with you at all times. Any unattended luggage in the terminal will be removed by the security services and may be destroyed", "language" : "de", "requestType" : "TEXT"}' \
  -H "Content-Type: application/json" \
@@ -28,7 +28,7 @@ curl -X POST -d \
 ```
 
 ### GET speech request
-```sbtshell
+```shell
 http://localhost/api/speech?apiKey=eabb12404d141ed6e8ee2193688178cb&action=convert&text=say%20this&voice=usenglishfemale&format=mp3
 ```
 
@@ -37,13 +37,13 @@ http://localhost/api/speech?apiKey=eabb12404d141ed6e8ee2193688178cb&action=conve
 Run the test suite to verify correct behaviour.  
 
 From the command line:
-```sbtshell
+```shell
 % sbt test
 ```
 ### Test Coverage Report
 To measure test coverage, this app uses the 'scoverage' SBT plugin.
 To create the report, rom the command line:
-```sbtshell
+```shell
 % sbt coverage test coverageReport
 ```
 
