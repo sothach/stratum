@@ -1,6 +1,6 @@
 package converters
 
-import controllers.Binders._
+import conversions.Binders._
 import model._
 import org.scalatest.{FlatSpec, Matchers}
 

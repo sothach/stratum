@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
   "net.jadler" % "jadler-all" % "1.3.0" % Test
 )
 
-routesImport += "controllers.Binders._"
+routesImport += "conversions.Binders._"
 
 import com.typesafe.sbt.packager.MappingsHelper._
 mappings in Universal ++= directory(baseDirectory.value / "public")

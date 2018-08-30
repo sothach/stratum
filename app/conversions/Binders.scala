@@ -1,4 +1,4 @@
-package controllers
+package conversions
 
 import model._
 import play.api.mvc.QueryStringBindable

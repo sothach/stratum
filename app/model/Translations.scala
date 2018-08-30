@@ -4,6 +4,7 @@ import model.RequestType.RequestType
 import model.SpeechAction.{SpeechAction, Value}
 import model.SpeechFormat.SpeechFormat
 import model.Voice.Voice
+import play.api.i18n.Lang
 import play.api.mvc.QueryStringBindable
 
 trait DefaultEnum extends Enumeration {
@@ -19,8 +20,8 @@ object RequestType extends DefaultEnum {
   val SPEECH = Value("speech")
   val FAIL = Value("fail")
 }
-case class TranslationRequest(text: String, language: String, requestType: RequestType)
-case class TranslationResponse(text: String, language: String, requestType: RequestType)
+case class TranslationRequest(text: String, language: Lang, requestType: RequestType)
+case class TranslationResponse(text: String, language: Lang, requestType: RequestType)
 
 object SpeechAction extends DefaultEnum {
   type SpeechAction = Value
