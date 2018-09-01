@@ -29,7 +29,7 @@ object Binders {
       val format = stringBinder.bind("format", params)
       val result = (action, text, voice, format) match {
         case (Some(Right(a)), Some(Right(t)), Some(Right(v)), f: Option[Either[String, String]]) =>
-          val fmt = f.flatMap(zzz => zzz.toOption.map(yyy => SpeechFormat.findOrDefault(yyy)))
+          val fmt = f.flatMap(_.toOption.map(SpeechFormat.findOrDefault))
           Right(SpeechRequest(t, Voice.findOrDefault(v), SpeechAction.findOrDefault(a), fmt))
         case _ =>
           Left("Unable to bind Speech request (1)")

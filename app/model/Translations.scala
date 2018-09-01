@@ -27,6 +27,7 @@ object SpeechAction extends DefaultEnum {
   type SpeechAction = Value
   override def default = FAIL
   val CONVERT = Value("convert")
+  val REVERSE = Value("reverse")
   val FAIL = Value("fail")
   implicit object speechActionQueryStringBinder
     extends QueryStringBindable.Parsing[SpeechAction.SpeechAction](

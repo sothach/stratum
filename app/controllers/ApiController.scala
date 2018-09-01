@@ -1,7 +1,6 @@
 package controllers
 
 import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
 import javax.inject.{Inject, Singleton}
 import model._
 import play.api.Logger
@@ -10,6 +9,7 @@ import play.api.mvc._
 import translations.TranslationService
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 @Singleton
 class ApiController @Inject()(implicit system: ActorSystem,
@@ -19,7 +19,6 @@ class ApiController @Inject()(implicit system: ActorSystem,
 
   implicit val ec = system.dispatcher
   val logger = Logger(this.getClass)
-  implicit val materializer = ActorMaterializer(ActorMaterializerSettings(system))
 
   private val expectKey = ApiKey("eabb12404d141ed6e8ee2193688178cb")
   logger.info("ApiController started")
@@ -52,18 +51,20 @@ class ApiController @Inject()(implicit system: ActorSystem,
       }
   }
 
-  def speech(apiKey: ApiKey, speechRequest: SpeechRequest) = Action { request =>
+  def speech(apiKey: ApiKey, speechRequest: SpeechRequest) = Action.async { request =>
       apiKey match {
         case key if key == expectKey =>
-          translationService.speechify(speechRequest) match {
+          translationService.speechify(speechRequest) map {
             case Some(source) =>
               Ok.chunked(source).as(s"""audio/${speechRequest.format.getOrElse("audio/wav")}""")
             case None =>
               NotFound
+          } recover { case e =>
+            InternalServerError(Json.toJson(e.getMessage))
           }
         case _ =>
           logger.warn(s"Missing or invalid API key in $request")
-          Unauthorized("Missing or invalid API key")
+          Future.successful(Unauthorized("Missing or invalid API key"))
       }
   }
 

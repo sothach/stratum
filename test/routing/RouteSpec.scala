@@ -1,5 +1,8 @@
 package routing
 
+import akka.actor.ActorSystem
+import akka.stream.{ActorMaterializer, ActorMaterializerSettings}
+import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.PlaySpec
@@ -89,6 +92,9 @@ class RouteSpec extends PlaySpec with ScalaFutures with GuiceOneAppPerSuite {
     }
   }
 
+  val system = ActorSystem.create("test-actor-system")
+  implicit val materializer = ActorMaterializer(ActorMaterializerSettings(system))(system)
+
   "A valid call to the speech service" should {
     "return successfully" in {
       val url =
@@ -102,10 +108,12 @@ class RouteSpec extends PlaySpec with ScalaFutures with GuiceOneAppPerSuite {
         .withHeaders(fakedHeaders)
 
       route(app, request) foreach { future =>
-        val result = Await.result(future, 10 seconds)
-        result.header.status mustBe OK
-        result.body.contentType mustBe Some("audio/mp3")
-        result.body.isKnownEmpty mustBe false
+        val response = Await.result(future, 10 seconds)
+        response.header.status mustBe OK
+        response.body.contentType mustBe Some("audio/mp3")
+        response.body.isKnownEmpty mustBe false
+        val result = Await.result(response.body.consumeData, 2 seconds)
+        result.length mustBe 22569
       }
     }
   }
@@ -125,11 +133,11 @@ class RouteSpec extends PlaySpec with ScalaFutures with GuiceOneAppPerSuite {
     }
   }
 
-  "A call to the speech service that cannot be converted" should {
-    "return not found (404)" in {
+  "A call to the speech service with an unsupported action" should {
+    "return 404" in {
       val url = s"""/api/speech?apiKey=$apiKey
-                   |&action=convert
-                   |&text=fail
+                   |&action=reverse
+                   |&text=something
                    |&voice=usenglishfemale
                    |&format=mp3""".stripMargin.replaceAll("\n","")
       val request = FakeRequest("GET", url)
@@ -137,6 +145,21 @@ class RouteSpec extends PlaySpec with ScalaFutures with GuiceOneAppPerSuite {
         .withHeaders(fakedHeaders)
 
       route(app, request).map(status) mustBe Some(NOT_FOUND)
+    }
+  }
+
+  "A call to the speech service that fails" should {
+    "result in a InternalServerError (500) status" in {
+      val url = s"""/api/speech?apiKey=$apiKey
+                   |&action=fail
+                   |&text=fail
+                   |&voice=usenglishfemale
+                   |&format=mp3""".stripMargin.replaceAll("\n","")
+      val request = FakeRequest("GET", url)
+        .withBody(failRequest)
+        .withHeaders(fakedHeaders)
+
+      route(app, request).map(status) mustBe Some(INTERNAL_SERVER_ERROR)
     }
   }
 

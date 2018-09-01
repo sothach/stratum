@@ -11,9 +11,14 @@ class ModelSpec extends FlatSpec with Matchers {
     RequestType.findOrDefault("XXX") shouldBe RequestType.FAIL
   }
 
-  "Valid SpeechAction strings" should "be deserialized" in {
+  "Convert SpeechAction strings" should "be deserialized" in {
     SpeechAction.findOrDefault("convert") shouldBe SpeechAction.CONVERT
   }
+
+  "Reverse SpeechAction strings" should "be deserialized" in {
+    SpeechAction.findOrDefault("reverse") shouldBe SpeechAction.REVERSE
+  }
+
   "Invalid SpeechAction strings" should "be deserialized as default" in {
     SpeechAction.findOrDefault("XXX") shouldBe SpeechAction.FAIL
   }

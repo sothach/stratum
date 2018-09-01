@@ -11,8 +11,6 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 libraryDependencies ++= Seq(
   ws, guice,
-  "org.slf4j" % "slf4j-jdk14" % "1.7.25",
-  "ch.qos.logback" % "logback-classic" % "1.2.3",
 
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
   "org.mockito" % "mockito-all" % "2.0.2-beta" % Test,
